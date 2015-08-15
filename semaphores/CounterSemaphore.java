@@ -4,7 +4,7 @@ public class CounterSemaphore implements Runnable {
     static final int THREADS = 4;
     static final int MAX_COUNT = 10000000;
     static volatile int counter = 0;
-    static Semaphore mutex = new Semaphore(1, true);
+    static Semaphore mutex = new Semaphore(1);
     int id;
 
     public CounterSemaphore(int id) {
@@ -15,7 +15,7 @@ public class CounterSemaphore implements Runnable {
     public void run() {
         int max = MAX_COUNT/THREADS;
         System.out.printf("Thread %d\n", id);
-        for (int i =0; i < max; i++) {
+        for (int i = 0; i < max; i++) {
             try {
                 mutex.acquire();
             } catch (InterruptedException e) {}

@@ -6,31 +6,35 @@ import time
 THREADS = 4
 MAX_COUNT = 10000000
 
-counter = 0
 mutex = threading.Semaphore(1)
+counter = 0
 
-class MyThread(threading.Thread):
-    def __init__(self, threadID):
-        super(MyThread, self).__init__()
-        self.threadID = threadID
+def thread():
+    global counter
 
-    def run(self):
-        global counter
-        print("Thread {}".format(self.threadID))
+    print("Thread {}".format(threading.current_thread().name))
 
-        for i in range(MAX_COUNT/THREADS):
-            mutex.acquire()
-            counter += 1
-            mutex.release()
-        
+    for i in range(MAX_COUNT/THREADS):
+        mutex.acquire()
+        counter += 1
+        mutex.release()
 
-# Create new threads
-threads = [MyThread(i) for i in range(THREADS)]
+def main():
+    threads = []
 
-# Start threads
-for t in threads: t.start()
+    for i in range(THREADS):
+        t = threading.Thread(target=thread)
+        threads.append(t)
 
-# Wait for all threads to complete
-for t in threads: t.join()
+    # Start all threads
+    for t in threads:
+        t.start()
 
-print("Counter value: %d Expected: %d\n" % (counter, MAX_COUNT))
+    # Wait for all threads to complete
+    for t in threads:
+        t.join()
+
+    print("Counter value: %d Expected: %d\n" % (counter, MAX_COUNT))
+
+if __name__ == "__main__":
+    main()
